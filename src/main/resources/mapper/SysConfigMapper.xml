@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mavis.digg_agent.mapper.SysConfigMapper">
+
+    <resultMap id="BaseResultMap" type="com.mavis.digg_agent.entity.po.SysConfig">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="configKey" column="config_key" jdbcType="VARCHAR"/>
+            <result property="configName" column="config_name" jdbcType="VARCHAR"/>
+            <result property="configValue" column="config_value" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,config_key,config_name,
+        config_value,status
+    </sql>
+</mapper>
