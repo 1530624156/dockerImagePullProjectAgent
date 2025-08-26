@@ -6,10 +6,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum SysConfigEnum {
+    CLASH_SHELL_PATH("clash.shellPath"),
     SERVERNAME("sys.servername"),
     STATUS("sys.status"),
     USERNAME("sys.username"),
     PASSWORD("sys.password");
+
 
     private String value;
 }
