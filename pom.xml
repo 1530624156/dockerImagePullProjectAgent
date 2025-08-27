@@ -67,6 +67,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.github.docker-java/docker-java -->
+        <dependency>
+            <groupId>com.github.docker-java</groupId>
+            <artifactId>docker-java</artifactId>
+            <version>3.2.13</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -98,7 +105,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.mavis.digg_agent.DockerImagePullProjectAgentApplication</mainClass>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
                 <executions>
                     <execution>

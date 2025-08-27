@@ -14,13 +14,13 @@ import javax.annotation.Resource;
  * @since 2025/8/26 21:17
  */
 @RestController
-@RequestMapping("/system")
+@RequestMapping("system")
 public class SysConfigController {
 
     @Resource
     private SysConfigLogic sysConfigLogic;
 
-    @PostMapping("/test")
+    @PostMapping("test")
     public RestResult testSystem(@RequestBody SysConfigParam param){
         return sysConfigLogic.testSystem(param);
     }
