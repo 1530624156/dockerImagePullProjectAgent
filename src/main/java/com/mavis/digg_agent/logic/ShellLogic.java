@@ -21,7 +21,8 @@ public class ShellLogic extends BaseLogic{
         String[] cmds = {"sh",clashShellPath};
         try {
             List<String> res = MyProcessUtil.callShellCommand(cmds, null);
-        } catch (IOException e) {
+            Thread.sleep(5000);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }

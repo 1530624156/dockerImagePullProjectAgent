@@ -26,4 +26,9 @@ public class DockerImagesController {
     public RestResult pullDockerImages(@RequestBody DockerImagesParam param){
         return dockerImagesLogic.pullDockerImages(param);
     }
+
+    @RequestMapping(value = "search", method = {RequestMethod.GET,RequestMethod.POST})
+    public RestResult searchDockerImages(@RequestBody DockerImagesParam param){
+        return dockerImagesLogic.searchDockerImages(param);
+    }
 }
