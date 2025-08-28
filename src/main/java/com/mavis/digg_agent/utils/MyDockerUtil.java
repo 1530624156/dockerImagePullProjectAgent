@@ -8,6 +8,7 @@ import com.github.dockerjava.api.model.*;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.LogContainerResultCallback;
+import com.github.dockerjava.core.exec.SearchImagesCmdExec;
 import com.mavis.digg_agent.entity.vo.DockerContainerVo;
 import org.apache.commons.lang3.StringUtils;
 
@@ -340,6 +341,27 @@ public class MyDockerUtil {
             return startDockerContainerById(containerVo.getId(), ip, port);
         }
         return false;
+    }
+
+    /**
+     * 根据镜像名查询镜像
+     * @param imageName 镜像名称
+     * @param ip 宿主机ip
+     * @param port 宿主机端口
+     * @return
+     */
+    public static boolean searchImage(String imageName,String ip,Integer port){
+        AtomicBoolean f = new AtomicBoolean(false);
+        execDockerCmd(ip,port,(client -> {
+            SearchImagesCmd req = client.searchImagesCmd(imageName);
+            List<SearchItem> exec = req.exec();
+            req.close();
+            if (!exec.isEmpty()){
+                f.set(true);
+            }
+            f.set(false);
+        }));
+        return f.get();
     }
 
     /**

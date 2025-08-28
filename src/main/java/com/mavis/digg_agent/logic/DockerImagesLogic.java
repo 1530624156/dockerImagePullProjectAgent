@@ -33,14 +33,18 @@ public class DockerImagesLogic extends BaseLogic{
        if (StringUtils.isBlank(param.getImageName())){
            return RestResult.fail("镜像名称不能为空");
        }
-       if (StringUtils.isBlank(param.getImageTag())){
-           return RestResult.fail("镜像标签不能为空");
-       }
-       // 开始拉取镜像
+       // 启用Clash
         boolean clashResult = shellLogic.restartClash();
        if (!clashResult){
            return RestResult.fail("启用clash失败");
        }
+       //延时5s
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        // 开始拉取镜像
        if (StringUtils.isBlank(param.getImageTag())){
            param.setImageTag("latest");
        }
