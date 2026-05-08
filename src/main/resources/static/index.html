@@ -267,6 +267,85 @@
         .guide-content .code-block .file { color: #f9e2af; }
         .guide-example { margin-top: 6px; }
 
+        /* sponsor */
+        .sponsor-section {
+            width: 100%;
+            max-width: 820px;
+            margin: 32px auto 0;
+            padding: 0 20px;
+        }
+        .sponsor-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 28px 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            text-align: center;
+        }
+        .sponsor-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+        .sponsor-card p {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+        .sponsor-images {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        .sponsor-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .sponsor-item img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .sponsor-item img:hover {
+            transform: scale(1.05);
+        }
+        .sponsor-item span {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        /* image modal */
+        .img-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .img-modal.show {
+            display: flex;
+        }
+        .img-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
         /* footer */
         .footer {
             margin-top: auto;
@@ -301,6 +380,7 @@
             <a href="/" class="active">拉取镜像</a>
             <a href="/images.html">镜像列表</a>
             <a href="/tasks.html">任务列表</a>
+            <a href="https://github.com/1530624156/dockerImagePullProjectAgent" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
     </nav>
 
@@ -372,7 +452,37 @@
         </div>
     </main>
 
-    <div class="footer">DIPP v0.1</div>
+    <div class="sponsor-section">
+        <div class="sponsor-card">
+            <h3>扫一扫赞助作者，请作者喝杯咖啡</h3>
+            <p>如果这个项目对你有帮助，欢迎请作者喝杯咖啡和维护服务器</p>
+            <div class="sponsor-images">
+                <div class="sponsor-item">
+                    <img src="./pic/wx.jpg" alt="微信赞赏码">
+                    <span>微信</span>
+                </div>
+                <div class="sponsor-item">
+                    <img src="./pic/zfb.jpg" alt="支付宝赞赏码">
+                    <span>支付宝</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">DIPP | Powered by <a href="http://mavis01.top:88/" target="_blank" rel="noopener noreferrer" style="color:#9ca3af;text-decoration:none;">Mavis</a></div>
+
+    <div class="img-modal" id="imgModal" onclick="this.classList.remove('show')">
+        <img id="modalImg" src="" alt="">
+    </div>
+
+    <script>
+        document.querySelectorAll('.sponsor-item img').forEach(img => {
+            img.addEventListener('click', () => {
+                document.getElementById('modalImg').src = img.src;
+                document.getElementById('imgModal').classList.add('show');
+            });
+        });
+    </script>
 
     <script>
         async function handleSubmit(e) {
