@@ -12,7 +12,7 @@ import com.github.dockerjava.core.exec.SearchImagesCmdExec;
 import com.mavis.digg_agent.entity.vo.DockerContainerVo;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -391,6 +391,32 @@ public class MyDockerUtil {
         }));
         return f.get();
     }
+    /**
+     * 保存镜像为tar包
+     * @param imageName 镜像名称（含标签，如 nginx:latest）
+     * @param outputPath tar包输出路径
+     * @param ip 宿主机ip
+     * @param port 宿主机端口
+     * @return 是否成功
+     */
+    public static boolean saveImage(String imageName, String outputPath, String ip, Integer port) {
+        AtomicBoolean f = new AtomicBoolean(false);
+        execDockerCmd(ip, port, (client -> {
+            try (InputStream imageStream = client.saveImageCmd(imageName).exec();
+                 FileOutputStream fos = new FileOutputStream(outputPath)) {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = imageStream.read(buffer)) != -1) {
+                    fos.write(buffer, 0, bytesRead);
+                }
+                f.set(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }));
+        return f.get();
+    }
+
     /**
      * 删除镜像
      * @return

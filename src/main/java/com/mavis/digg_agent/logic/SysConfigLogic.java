@@ -4,14 +4,31 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.mavis.digg_agent.entity.enums.SysConfigEnum;
 import com.mavis.digg_agent.entity.enums.YesOrNoEnum;
 import com.mavis.digg_agent.entity.param.SysConfigParam;
+import com.mavis.digg_agent.entity.po.SysConfig;
 import com.mavis.digg_agent.service.SysConfigService;
 import com.mavis.digg_agent.utils.RestResult;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class SysConfigLogic extends BaseLogic{
+
+    @Resource
+    private SysConfigService sysConfigService;
+
+    /**
+     * 获取所有配置项{key : value}
+     * @return
+     */
+    public Map<String,String> getAllConfigToMap(){
+        List<SysConfig> sysConfigList = sysConfigService.list();
+        Map<String, String> sysConfigMap = sysConfigList.stream().collect(Collectors.toMap(SysConfig::getConfigKey, SysConfig::getConfigValue));
+        return sysConfigMap;
+    }
 
     /**
      * 测试系统

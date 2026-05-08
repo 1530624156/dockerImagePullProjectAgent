@@ -12,4 +12,5 @@ import lombok.Data;
 public class DockerImagesParam {
     private String imageName;
     private String imageTag;
+    private String createEmail;
 }

@@ -1,6 +1,288 @@
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Images Pull Proxy (DIPP)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            background: #f4f6f8;
+            font-family: 'Inter', -apple-system, sans-serif;
+            color: #374151;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 28px;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            z-index: 10;
+        }
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #111827;
+        }
+        .topbar-brand svg { width: 22px; height: 22px; }
+        .topbar-nav {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .topbar-nav a {
+            font-size: 13px;
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .topbar-nav a:hover { color: #111827; }
+        .topbar-nav a.active { color: #4f46e5; font-weight: 500; }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 32px;
+            margin-top: 40px;
+        }
+        .hero-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: #eef2ff;
+            border: 1px solid #e0e7ff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .hero-icon svg { width: 28px; height: 28px; }
+        .hero h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+        .hero p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 28px 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .field { margin-bottom: 18px; }
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .field label .req { color: #ef4444; }
+        .field label .opt { color: #9ca3af; font-weight: 400; font-size: 12px; }
+        .field input {
+            width: 100%;
+            height: 42px;
+            padding: 0 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #111827;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .field input::placeholder { color: #c0c4cc; }
+        .field input:focus { border-color: #6366f1; }
+
+        .sep {
+            height: 1px;
+            background: #f3f4f6;
+            margin: 22px 0;
+        }
+
+        .btn {
+            width: 100%;
+            height: 44px;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .btn-primary {
+            background: #4f46e5;
+            color: #fff;
+        }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+        .btn .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .result {
+            margin-top: 18px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            display: none;
+            word-break: break-all;
+        }
+        .result.show { display: block; }
+        .result.ok {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #15803d;
+        }
+        .result.err {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+        }
+
+        .footer {
+            margin-top: 32px;
+            font-size: 12px;
+            color: #c0c4cc;
+        }
+    </style>
+</head>
 <body>
-<h1>hello word!!!</h1>
-<p>this is a html page</p>
+    <nav class="topbar">
+        <div class="topbar-brand">
+            <svg viewBox="0 0 32 32" fill="none">
+                <rect x="2" y="12" width="28" height="16" rx="3" stroke="#4f46e5" stroke-width="1.5" fill="none" opacity="0.5"/>
+                <rect x="6" y="16" width="4" height="4" rx="0.5" fill="#4f46e5" opacity="0.35"/>
+                <rect x="13" y="16" width="4" height="4" rx="0.5" fill="#4f46e5" opacity="0.35"/>
+                <rect x="20" y="16" width="4" height="4" rx="0.5" fill="#4f46e5" opacity="0.35"/>
+                <rect x="6" y="8" width="20" height="4" rx="1.5" stroke="#4f46e5" stroke-width="1.2" fill="none" opacity="0.4"/>
+                <rect x="12" y="4" width="8" height="4" rx="1.5" stroke="#4f46e5" stroke-width="1.2" fill="none" opacity="0.4"/>
+            </svg>
+            <span>DIPP</span>
+        </div>
+        <div class="topbar-nav">
+            <a href="/" class="active">拉取镜像</a>
+            <a href="/images.html">镜像列表</a>
+            <a href="/tasks.html">任务列表</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-icon">
+            <svg viewBox="0 0 36 36" fill="none">
+                <path d="M18 4L32 12V24L18 32L4 24V12L18 4Z" stroke="#4f46e5" stroke-width="1.5" fill="none" opacity="0.25"/>
+                <path d="M18 10L26 14.5V23.5L18 28L10 23.5V14.5L18 10Z" stroke="#4f46e5" stroke-width="1.5" fill="none" opacity="0.4"/>
+                <circle cx="18" cy="19" r="3" fill="#4f46e5" opacity="0.3"/>
+            </svg>
+        </div>
+        <h1>Docker Images Pull Proxy</h1>
+        <p>通过代理拉取 Docker 镜像并导出为 tar 包</p>
+    </div>
+
+    <div class="card">
+        <form id="pullForm" onsubmit="return handleSubmit(event)">
+            <div class="field">
+                <label>镜像名称 <span class="req">*</span></label>
+                <input type="text" id="imageName" placeholder="nginx / library/redis" required autocomplete="off">
+            </div>
+            <div class="field">
+                <label>镜像标签</label>
+                <input type="text" id="imageTag" placeholder="默认 latest" autocomplete="off">
+            </div>
+            <div class="sep"></div>
+            <div class="field">
+                <label>通知邮箱 <span class="opt">(可选)</span></label>
+                <input type="email" id="createEmail" placeholder="you@example.com" autocomplete="off">
+            </div>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+                <span class="btn-content" id="btnText">提交拉取任务</span>
+            </button>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+
+    <div class="footer">DIPP v0.1</div>
+
+    <script>
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const result = document.getElementById('result');
+
+            const imageName = document.getElementById('imageName').value.trim();
+            const imageTag = document.getElementById('imageTag').value.trim();
+            const createEmail = document.getElementById('createEmail').value.trim();
+            if (!imageName) return;
+
+            const body = { imageName };
+            if (imageTag) body.imageTag = imageTag;
+            if (createEmail) body.createEmail = createEmail;
+
+            btn.disabled = true;
+            btnText.innerHTML = '<span class="spinner"></span>提交中...';
+            result.className = 'result';
+
+            try {
+                const resp = await fetch('/docker/pull', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await resp.json();
+                const ok = data.status === true;
+                result.textContent = ok ? (data.data || data.msg) : data.msg;
+                result.className = 'result show ' + (ok ? 'ok' : 'err');
+            } catch (err) {
+                result.textContent = '请求失败: ' + err.message;
+                result.className = 'result show err';
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = '提交拉取任务';
+            }
+        }
+    </script>
 </body>
 </html>

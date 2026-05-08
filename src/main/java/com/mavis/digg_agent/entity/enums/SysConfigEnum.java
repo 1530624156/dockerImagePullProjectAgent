@@ -12,7 +12,10 @@ public enum SysConfigEnum {
     SERVERNAME("sys.servername"),
     STATUS("sys.status"),
     USERNAME("sys.username"),
-    PASSWORD("sys.password");
+    PASSWORD("sys.password"),
+    SYS_TAR_PATH("sys.tarPath"),
+    SYS_DOWNLOAD_PATH("sys.downloadPath"),
+    SYS_TASK_MAXCOUNT("sys.task.maxCount");
 
 
     private String value;

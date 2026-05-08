@@ -20,9 +20,20 @@ public class ShellLogic extends BaseLogic{
         // 执行clash
         String[] cmds = {"sh",clashShellPath};
         try {
-            List<String> res = MyProcessUtil.callShellCommand(cmds, null);
+            MyProcessUtil.callShellCommand(cmds, null);
             Thread.sleep(5000);
         } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public boolean deleteFile(String fileName) {
+        String[] cmds = {"rm","-rf",fileName};
+        try {
+            MyProcessUtil.callShellCommand(cmds, null);
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
